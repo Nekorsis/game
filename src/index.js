@@ -2,8 +2,11 @@ import './index.css';
 import './reset.css';
 
 const gameContainer = document.getElementsByClassName('game-field')[0];
-const listOfCircleIds = [];
+const scoreContainer =  document.getElementsByClassName('score-field')[0];
+let listOfCircleIds = [];
 let timer;
+let score = 0;
+scoreContainer.innerHTML = `Your score is: ${score}`;
 
 const circleButton = document.getElementsByClassName('add-circle-btn')[0];
 circleButton.onclick = () => {
@@ -31,6 +34,26 @@ const createCircle = () => {
             y: getRandomArbitrary(40, containerSize.h),
         }
     }
+    const unmountCircle = (listOfCircleIds, circle) => {
+        listOfCircleIds.forEach((element, index) => {
+            if (element === circle.id) {
+                score = score - 100;
+                scoreContainer.innerHTML = `Your score is: ${score}`;;
+                listOfCircleIds.splice(index, 1);
+                circle.remove();
+            }
+        })
+    }
+    const unmountCircleByClick = (listOfCircleIds, circle) => {
+        listOfCircleIds.forEach((element, index) => {
+            if (element === circle.id) {
+                score = score + 100;
+                scoreContainer.innerHTML = `Your score is: ${score}`;;
+                listOfCircleIds.splice(index, 1);
+                circle.remove();
+            }
+        })
+    }
     /* Initialize circle */
     const circle = document.createElement('div');
     circle.className = 'circle';
@@ -41,19 +64,20 @@ const createCircle = () => {
     listOfCircleIds.push(circle.id);
 
     /* Setting onclick property */
-    circle.onclick = () => {
-        listOfCircleIds.forEach((element, index) => {
-            if (element === circle.id) {
-            }
-        })
-        circle.remove();
-    }
+    circle.addEventListener('mousedown', (e) => {
+        if (e.button === 0) {
+            unmountCircleByClick(listOfCircleIds, circle);
+        };
+    });
 
     /* Mount circle in a random place */
     const coordinates = getRandomCoordinates();
     circle.style.left = coordinates.x +'px';
     circle.style.top = coordinates.y +'px';
     gameContainer.appendChild(circle);
+
+    /* Set self-destruct timer */
+    setTimeout(() => {unmountCircle(listOfCircleIds, circle)}, 1800);
 };
 
 const startGame = () => {
@@ -63,7 +87,14 @@ const startGame = () => {
 }
 
 const stopGame = () => {
+    const clearFiels = (listOfCircleIds) => {
+        listOfCircleIds.forEach(circleId => {
+            const circle = document.getElementById(circleId);
+            circle.remove();
+        });
+        listOfCircleIds = [];
+    }
+    clearFiels(listOfCircleIds);
     clearInterval(timer);
 }
 
-// createCircle();

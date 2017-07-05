@@ -1,6 +1,7 @@
 body {
     margin: 0 auto;
     padding: 0;
+    height: 100vh;
 }
 #app {
     width: 100%;
@@ -10,8 +11,8 @@ body {
 .game-field {
     /*background-color: red;*/
     position: relative;
-    width: 700px;
-    height: 560px;
+    width: 600px;
+    height: 460px;
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
@@ -24,3 +25,11 @@ body {
     background-color: red;
     border-radius: 50%;
 }
+.score-field {
+    width: 140px;
+    height: 50px;
+    position: absolute;
+    right: 10%;
+    top: 0;
+}
+    
