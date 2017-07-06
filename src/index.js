@@ -2,6 +2,9 @@ import './index.css';
 import './reset.css';
 
 const gameContainer = document.getElementsByClassName('game-field')[0];
+gameContainer.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+});
 const scoreContainer =  document.getElementsByClassName('score-field')[0];
 let listOfCircleIds = [];
 let timer;
@@ -10,7 +13,7 @@ scoreContainer.innerHTML = `Your score is: ${score}`;
 
 const circleButton = document.getElementsByClassName('add-circle-btn')[0];
 circleButton.onclick = () => {
-    createCircle();
+    createRedCircle();
 }
 
 const startGameButton = document.getElementsByClassName('start-game-btn')[0];
@@ -23,9 +26,18 @@ endGameButton.onclick = () => {
     stopGame();
 }
 
-const createCircle = () => {
+const updateScore = (action) => {
+    if (action === 'add') {
+        score = score + 100;
+    }
+    if (action === 'remove') {
+        score = score - 100;
+    }
+}
+
+const createRedCircle = (colour) => {
     const getRandomCoordinates = () => {
-        const containerSize = {w: gameContainer.clientWidth - 60, h: gameContainer.clientHeight - 60};
+        const containerSize = {w: 600 - 60, h: 460 - 60};
         const getRandomArbitrary = (min, max) => {
             return Math.round(Math.random() * (max - min) + min);
         }
@@ -36,8 +48,8 @@ const createCircle = () => {
     }
     const unmountCircle = (listOfCircleIds, circle) => {
         listOfCircleIds.forEach((element, index) => {
-            if (element === circle.id) {
-                score = score - 100;
+            if (element.id === circle.id) {
+                updateScore('remove');
                 scoreContainer.innerHTML = `Your score is: ${score}`;;
                 listOfCircleIds.splice(index, 1);
                 circle.remove();
@@ -46,8 +58,8 @@ const createCircle = () => {
     }
     const unmountCircleByClick = (listOfCircleIds, circle) => {
         listOfCircleIds.forEach((element, index) => {
-            if (element === circle.id) {
-                score = score + 100;
+            if (element.id === circle.id) {
+                updateScore('add');
                 scoreContainer.innerHTML = `Your score is: ${score}`;;
                 listOfCircleIds.splice(index, 1);
                 circle.remove();
@@ -56,24 +68,40 @@ const createCircle = () => {
     }
     /* Initialize circle */
     const circle = document.createElement('div');
-    circle.className = 'circle';
+    circle.className = `${colour}-circle`;
 
     /* Set circle id and push it to array to kepp track of it */
     const circleId = Math.round(Math.random() * (100000 - 1) + 1);
     circle.id = circleId;
-    listOfCircleIds.push(circle.id);
 
     /* Setting onclick property */
     circle.addEventListener('mousedown', (e) => {
-        if (e.button === 0) {
+        if (e.button === 0 && e.target.className.includes('red')) 
+        {      
             unmountCircleByClick(listOfCircleIds, circle);
-        };
+        }
+        if (e.button === 2 && e.target.className.includes('blue'))
+        {
+            unmountCircleByClick(listOfCircleIds, circle);
+        }
     });
 
     /* Mount circle in a random place */
-    const coordinates = getRandomCoordinates();
+    let coordinates = getRandomCoordinates();
+    const getUniqueCoordinates = (coordinates) => {
+        const isUnique = listOfCircleIds.every(circle => {
+            if (coordinates.x === circle.x + 60 || coordinates.y + 60 == circle.y) {
+                // coordinates = getRandomCoordinates();
+            }
+        });
+    };
     circle.style.left = coordinates.x +'px';
     circle.style.top = coordinates.y +'px';
+    listOfCircleIds.push({
+        id: circle.id,
+        x: circle.style.left,
+        y: circle.style.top,
+    });
     gameContainer.appendChild(circle);
 
     /* Set self-destruct timer */
@@ -82,14 +110,15 @@ const createCircle = () => {
 
 const startGame = () => {
     timer = setInterval(() => {
-        createCircle();
-    }, 1000);
+        const color = Math.random() >= 0.4 ? 'red' : 'blue';
+        createRedCircle(color);
+    }, 700);
 }
 
 const stopGame = () => {
     const clearFiels = (listOfCircleIds) => {
-        listOfCircleIds.forEach(circleId => {
-            const circle = document.getElementById(circleId);
+        listOfCircleIds.forEach(circl => {
+            const circle = document.getElementById(circl.id);
             circle.remove();
         });
         listOfCircleIds = [];

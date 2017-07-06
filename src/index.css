@@ -18,11 +18,18 @@ body {
     margin-right: auto;
     border: 1px solid red;
 }
-.circle {
+.red-circle {
     position: absolute;
     width: 60px;
     height: 60px;
     background-color: red;
+    border-radius: 50%;
+}
+.blue-circle {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    background-color: blue;
     border-radius: 50%;
 }
 .score-field {
