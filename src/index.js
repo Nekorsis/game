@@ -88,13 +88,19 @@ const createRedCircle = (colour) => {
 
     /* Mount circle in a random place */
     let coordinates = getRandomCoordinates();
-    const getUniqueCoordinates = (coordinates) => {
+    const isUniqueCoordinates = (coordinates) => {
         const isUnique = listOfCircleIds.every(circle => {
-            if (coordinates.x === circle.x + 60 || coordinates.y + 60 == circle.y) {
-                // coordinates = getRandomCoordinates();
-            }
+            console.log('isUniqueCoordinatesX : ',
+            coordinates.x + 80, parseInt((circle.x.split('p')[0])) + 80);
+            console.log('isUniqueCoordinatesY : ',
+            coordinates.y + 80, parseInt((circle.y.split('p')[0])) + 80);
+            return (coordinates.x + 80 !== parseInt((circle.x.split('p')[0])) + 80) 
+            || 
+            (coordinates.y + 80 !== parseInt((circle.y.split('p')[0])) + 80);
         });
+        return isUnique;
     };
+    console.log(' ', isUniqueCoordinates(coordinates));
     circle.style.left = coordinates.x +'px';
     circle.style.top = coordinates.y +'px';
     listOfCircleIds.push({
@@ -105,7 +111,7 @@ const createRedCircle = (colour) => {
     gameContainer.appendChild(circle);
 
     /* Set self-destruct timer */
-    setTimeout(() => {unmountCircle(listOfCircleIds, circle)}, 1800);
+    // setTimeout(() => {unmountCircle(listOfCircleIds, circle)}, 1800);
 };
 
 const startGame = () => {
@@ -123,7 +129,7 @@ const stopGame = () => {
         });
         listOfCircleIds = [];
     }
-    clearFiels(listOfCircleIds);
+    //clearFiels(listOfCircleIds);
     clearInterval(timer);
 }
 
