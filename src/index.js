@@ -9,11 +9,13 @@ const scoreContainer =  document.getElementsByClassName('score-field')[0];
 let listOfCircleIds = [];
 let timer;
 let score = 0;
+let counter = 0;
+let isGameStarted = false;
 scoreContainer.innerHTML = `Your score is: ${score}`;
 
 const circleButton = document.getElementsByClassName('add-circle-btn')[0];
 circleButton.onclick = () => {
-    createRedCircle();
+    createRedCircle('red');
 }
 
 const startGameButton = document.getElementsByClassName('start-game-btn')[0];
@@ -57,33 +59,69 @@ const createRedCircle = (colour) => {
         })
     }
     const unmountCircleByClick = (listOfCircleIds, circle) => {
-        listOfCircleIds.forEach((element, index) => {
-            if (element.id === circle.id) {
-                updateScore('add');
-                scoreContainer.innerHTML = `Your score is: ${score}`;;
-                listOfCircleIds.splice(index, 1);
-                circle.remove();
-            }
-        })
+        const scoreText = document.createElement('div');
+        circle.className = 'score-text';
+        circle.appendChild(scoreText);
+        setTimeout(() => {
+            listOfCircleIds.forEach((element, index) => {
+                if (element.id === circle.id) {
+                    updateScore('add');
+                    scoreContainer.innerHTML = `Your score is: ${score}`;;
+                    listOfCircleIds.splice(index, 1);
+                    circle.remove();   
+                    scoreText.remove();      
+                }
+            });
+        }, 200);
     }
     /* Initialize circle */
     const circle = document.createElement('div');
     circle.className = `${colour}-circle`;
+    counter = counter + 1;
 
     /* Set circle id and push it to array to kepp track of it */
-    const circleId = Math.round(Math.random() * (100000 - 1) + 1);
+    const circleId = counter;
     circle.id = circleId;
+    circle.innerHTML = circleId;
 
     /* Setting onclick property */
     circle.addEventListener('mousedown', (e) => {
+        /*
+        switch (e.button) {
+            case 0 && e.target.className.includes('red'):
+                unmountCircleByClick(listOfCircleIds, circle);
+                break;
+            case 1 && e.target.className.includes('red'):
+                unmountCircle(listOfCircleIds, circle);
+                break;
+            case 1 && e.target.className.includes('blue'):
+                unmountCircleByClick(listOfCircleIds, circle);
+            case 0 && e.target.className.includes('blue'):
+                unmountCircle(listOfCircleIds, circle);
+            default:
+                break;
+        }
+        */
         if (e.button === 0 && e.target.className.includes('red')) 
         {      
             unmountCircleByClick(listOfCircleIds, circle);
         }
+        /*
+        else if (e.button === 2 && e.target.className.includes('red'))
+        {
+            unmountCircle(listOfCircleIds, circle);
+        }
+        */
         if (e.button === 2 && e.target.className.includes('blue'))
         {
             unmountCircleByClick(listOfCircleIds, circle);
         }
+        /*
+        else if (e.button === 0 && e.target.className.includes('blue'))
+        {
+            unmountCircle(listOfCircleIds, circle);
+        }
+        */
     });
 
     /* Mount circle in a random place */
@@ -100,7 +138,7 @@ const createRedCircle = (colour) => {
         });
         return isUnique;
     };
-    console.log(' ', isUniqueCoordinates(coordinates));
+    // console.log(' ', isUniqueCoordinates(coordinates));
     circle.style.left = coordinates.x +'px';
     circle.style.top = coordinates.y +'px';
     listOfCircleIds.push({
@@ -115,10 +153,15 @@ const createRedCircle = (colour) => {
 };
 
 const startGame = () => {
-    timer = setInterval(() => {
-        const color = Math.random() >= 0.4 ? 'red' : 'blue';
-        createRedCircle(color);
-    }, 700);
+    if (!isGameStarted) {
+        isGameStarted = !isGameStarted;
+        timer = setInterval(() => {
+            const color = Math.random() >= 0.4 ? 'red' : 'blue';
+            createRedCircle(color);
+        }, 700);
+        return;
+    }
+    return;
 }
 
 const stopGame = () => {
@@ -129,7 +172,7 @@ const stopGame = () => {
         });
         listOfCircleIds = [];
     }
-    //clearFiels(listOfCircleIds);
+    clearFiels(listOfCircleIds);
     clearInterval(timer);
 }
 

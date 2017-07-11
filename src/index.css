@@ -9,14 +9,14 @@ body {
     background-color: #edeef0;
 }
 .game-field {
-    /*background-color: red;*/
+    background-color: #3e3b3b;
     position: relative;
     width: 600px;
     height: 460px;
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
-    border: 1px solid red;
+    border: 1px solid #74bb3f;
 }
 .red-circle {
     position: absolute;
@@ -24,6 +24,11 @@ body {
     height: 60px;
     background-color: red;
     border-radius: 50%;
+    text-align: center;
+    line-height: 60px;
+    color: #fff;
+    font-size: 22px;
+    border: 1px solid #fff;
 }
 .blue-circle {
     position: absolute;
@@ -31,6 +36,11 @@ body {
     height: 60px;
     background-color: blue;
     border-radius: 50%;
+    text-align: center;
+    line-height: 60px;
+    color: #fff;
+    font-size: 22px;
+    border: 1px solid #fff;
 }
 .score-field {
     width: 140px;
@@ -39,4 +49,18 @@ body {
     right: 10%;
     top: 0;
 }
-    
+.score-text {
+    position: absolute;
+    top: 0;
+    font-size: 25px;
+    animation-name: example;
+    animation-duration: 0.3s;
+    animation-delay: 0.2s;
+}
+@keyframes example {
+    0%   {color: rgba(255, 255, 255, 1);}
+    25%  {color: rgba(255, 255, 255, 0.8);}
+    50%  {color: rgba(255, 255, 255, 0.5);}
+    75%  {color: rgba(255, 255, 255, 0.2);}
+    100% {color: rgba(255, 255, 255, 0.0);}
+}
