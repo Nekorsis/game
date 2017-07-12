@@ -48,19 +48,30 @@ const createRedCircle = (colour) => {
             y: getRandomArbitrary(40, containerSize.h),
         }
     }
-    const unmountCircle = (listOfCircleIds, circle) => {
-        listOfCircleIds.forEach((element, index) => {
+    const unmountCircleByTimeOut = (listOfCircleIds, circle) => {
+        const scoreText = document.createElement('div');
+        circle.className = 'score-text';
+        circle.innerHTML = '';
+        scoreText.innerHTML = '-100';
+        circle.appendChild(scoreText);
+        setTimeout(() => {
+            listOfCircleIds.forEach((element, index) => {
             if (element.id === circle.id) {
                 updateScore('remove');
                 scoreContainer.innerHTML = `Your score is: ${score}`;;
                 listOfCircleIds.splice(index, 1);
                 circle.remove();
+                scoreText.remove();
             }
         })
+        }, 250);
+        
     }
     const unmountCircleByClick = (listOfCircleIds, circle) => {
         const scoreText = document.createElement('div');
         circle.className = 'score-text';
+        circle.innerHTML = '';
+        scoreText.innerHTML = '+100';
         circle.appendChild(scoreText);
         setTimeout(() => {
             listOfCircleIds.forEach((element, index) => {
@@ -72,8 +83,9 @@ const createRedCircle = (colour) => {
                     scoreText.remove();      
                 }
             });
-        }, 200);
+        }, 250);
     }
+
     /* Initialize circle */
     const circle = document.createElement('div');
     circle.className = `${colour}-circle`;
@@ -83,45 +95,24 @@ const createRedCircle = (colour) => {
     const circleId = counter;
     circle.id = circleId;
     circle.innerHTML = circleId;
+    circle.isClicked = false;
 
     /* Setting onclick property */
     circle.addEventListener('mousedown', (e) => {
-        /*
-        switch (e.button) {
-            case 0 && e.target.className.includes('red'):
-                unmountCircleByClick(listOfCircleIds, circle);
-                break;
-            case 1 && e.target.className.includes('red'):
-                unmountCircle(listOfCircleIds, circle);
-                break;
-            case 1 && e.target.className.includes('blue'):
-                unmountCircleByClick(listOfCircleIds, circle);
-            case 0 && e.target.className.includes('blue'):
-                unmountCircle(listOfCircleIds, circle);
-            default:
-                break;
+        if (circle.isClicked) {
+            e.preventDefault();
+            return;
         }
-        */
-        if (e.button === 0 && e.target.className.includes('red')) 
-        {      
+        circle.isClicked = true;
+        if (e.button === 0 && e.target.className.includes('red')) {     
             unmountCircleByClick(listOfCircleIds, circle);
-        }
-        /*
-        else if (e.button === 2 && e.target.className.includes('red'))
-        {
-            unmountCircle(listOfCircleIds, circle);
-        }
-        */
-        if (e.button === 2 && e.target.className.includes('blue'))
-        {
+        } else if (e.button === 2 && e.target.className.includes('red')) {
+            unmountCircleByTimeOut(listOfCircleIds, circle);
+        } else if (e.button === 2 && e.target.className.includes('blue')) {
             unmountCircleByClick(listOfCircleIds, circle);
+        } else if (e.button === 0 && e.target.className.includes('blue')) {
+            unmountCircleByTimeOut(listOfCircleIds, circle);
         }
-        /*
-        else if (e.button === 0 && e.target.className.includes('blue'))
-        {
-            unmountCircle(listOfCircleIds, circle);
-        }
-        */
     });
 
     /* Mount circle in a random place */
@@ -149,7 +140,7 @@ const createRedCircle = (colour) => {
     gameContainer.appendChild(circle);
 
     /* Set self-destruct timer */
-    // setTimeout(() => {unmountCircle(listOfCircleIds, circle)}, 1800);
+    setTimeout(() => {unmountCircleByTimeOut(listOfCircleIds, circle)}, 1300);
 };
 
 const startGame = () => {

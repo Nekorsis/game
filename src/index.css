@@ -56,6 +56,7 @@ body {
     animation-name: example;
     animation-duration: 0.3s;
     animation-delay: 0.2s;
+    color: #fff;
 }
 @keyframes example {
     0%   {color: rgba(255, 255, 255, 1);}
