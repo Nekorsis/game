@@ -2,16 +2,32 @@ import './index.css';
 import './reset.css';
 
 const gameContainer = document.getElementsByClassName('game-field')[0];
+const redAudio = document.getElementsByClassName('audio-red')[0];
+const blueAudio = document.getElementsByClassName('audio-blue')[0];
+const scoreContainer =  document.getElementsByClassName('score-field')[0];
+const comboContainer =  document.getElementsByClassName('combo-field')[0];
+
+/*
+gameContainer.onclick = () => {
+    gameContainer.classList.add('--shaking');   
+};
+
+gameContainer.addEventListener('animationend', () => {
+    gameContainer.className = 'game-field';
+});
+*/
+
 gameContainer.addEventListener('contextmenu', (e) => {
     e.preventDefault();
 });
-const scoreContainer =  document.getElementsByClassName('score-field')[0];
+
+let combo = 0;
+let circlesSize = 80;
 let listOfCircleIds = [];
 let timer;
 let score = 0;
 let counter = 0;
 let isGameStarted = false;
-scoreContainer.innerHTML = `Your score is: ${score}`;
 
 const circleButton = document.getElementsByClassName('add-circle-btn')[0];
 circleButton.onclick = () => {
@@ -28,24 +44,52 @@ endGameButton.onclick = () => {
     stopGame();
 }
 
+const updateDOM = () => {
+    scoreContainer.innerHTML = `Your score is: ${score}`;
+    comboContainer.innerHTML = `Combo: ${combo}`;
+}
+
+updateDOM();
+
 const updateScore = (action) => {
     if (action === 'add') {
         score = score + 100;
+        updateDOM();
     }
     if (action === 'remove') {
         score = score - 100;
+        updateDOM();
+    }
+}
+
+const updateCombo = (action) => {
+    if (action === 'add') {
+        combo = combo + 1;
+        updateDOM();
+    }
+    if (action === 'break') {
+        combo = 0;
+        updateDOM();
     }
 }
 
 const createRedCircle = (colour) => {
+    let isCircleClicked = false;
     const getRandomCoordinates = () => {
-        const containerSize = {w: 600 - 60, h: 460 - 60};
+        const containerSize = {w: 1025 - circlesSize, h: 625 - circlesSize};
         const getRandomArbitrary = (min, max) => {
             return Math.round(Math.random() * (max - min) + min);
         }
+        const x = getRandomArbitrary(40, containerSize.w);
+        const y = getRandomArbitrary(40, containerSize.h);
+        const something = listOfCircleIds.every(circle => {
+            console.log(x - parseInt((circle.x.split('p')[0])));
+            return  (x - parseInt((circle.x.split('p')[0]))) >= 150 
+        });
+        console.log('something: ', something);
         return {
-            x: getRandomArbitrary(40, containerSize.w),
-            y: getRandomArbitrary(40, containerSize.h),
+            x,
+            y,
         }
     }
     const unmountCircleByTimeOut = (listOfCircleIds, circle) => {
@@ -54,11 +98,11 @@ const createRedCircle = (colour) => {
         circle.innerHTML = '';
         scoreText.innerHTML = '-100';
         circle.appendChild(scoreText);
+        updateScore('remove');
+        updateCombo('break');
         setTimeout(() => {
             listOfCircleIds.forEach((element, index) => {
             if (element.id === circle.id) {
-                updateScore('remove');
-                scoreContainer.innerHTML = `Your score is: ${score}`;;
                 listOfCircleIds.splice(index, 1);
                 circle.remove();
                 scoreText.remove();
@@ -72,12 +116,12 @@ const createRedCircle = (colour) => {
         circle.className = 'score-text';
         circle.innerHTML = '';
         scoreText.innerHTML = '+100';
+        updateScore('add');
+        updateCombo('add');
         circle.appendChild(scoreText);
         setTimeout(() => {
             listOfCircleIds.forEach((element, index) => {
                 if (element.id === circle.id) {
-                    updateScore('add');
-                    scoreContainer.innerHTML = `Your score is: ${score}`;;
                     listOfCircleIds.splice(index, 1);
                     circle.remove();   
                     scoreText.remove();      
@@ -89,6 +133,9 @@ const createRedCircle = (colour) => {
     /* Initialize circle */
     const circle = document.createElement('div');
     circle.className = `${colour}-circle`;
+    circle.style.width = `${circlesSize}px`;
+    circle.style.height = `${circlesSize}px`;
+    circle.style.lineHeight = `${circlesSize}px`;
     counter = counter + 1;
 
     /* Set circle id and push it to array to kepp track of it */
@@ -97,39 +144,30 @@ const createRedCircle = (colour) => {
     circle.innerHTML = circleId;
     circle.isClicked = false;
 
-    /* Setting onclick property */
-    circle.addEventListener('mousedown', (e) => {
+    circle.onmousedown = (e) => {
+        e.stopPropagation();
         if (circle.isClicked) {
             e.preventDefault();
             return;
         }
         circle.isClicked = true;
-        if (e.button === 0 && e.target.className.includes('red')) {     
+        if (e.button === 0 && e.target.className.includes('red')) {
+            isCircleClicked = true;
+            redAudio.play()     
             unmountCircleByClick(listOfCircleIds, circle);
         } else if (e.button === 2 && e.target.className.includes('red')) {
             unmountCircleByTimeOut(listOfCircleIds, circle);
         } else if (e.button === 2 && e.target.className.includes('blue')) {
+            isCircleClicked = true;
+            blueAudio.play()
             unmountCircleByClick(listOfCircleIds, circle);
         } else if (e.button === 0 && e.target.className.includes('blue')) {
             unmountCircleByTimeOut(listOfCircleIds, circle);
         }
-    });
+    }
 
     /* Mount circle in a random place */
     let coordinates = getRandomCoordinates();
-    const isUniqueCoordinates = (coordinates) => {
-        const isUnique = listOfCircleIds.every(circle => {
-            console.log('isUniqueCoordinatesX : ',
-            coordinates.x + 80, parseInt((circle.x.split('p')[0])) + 80);
-            console.log('isUniqueCoordinatesY : ',
-            coordinates.y + 80, parseInt((circle.y.split('p')[0])) + 80);
-            return (coordinates.x + 80 !== parseInt((circle.x.split('p')[0])) + 80) 
-            || 
-            (coordinates.y + 80 !== parseInt((circle.y.split('p')[0])) + 80);
-        });
-        return isUnique;
-    };
-    // console.log(' ', isUniqueCoordinates(coordinates));
     circle.style.left = coordinates.x +'px';
     circle.style.top = coordinates.y +'px';
     listOfCircleIds.push({
@@ -140,7 +178,11 @@ const createRedCircle = (colour) => {
     gameContainer.appendChild(circle);
 
     /* Set self-destruct timer */
-    setTimeout(() => {unmountCircleByTimeOut(listOfCircleIds, circle)}, 1300);
+    setTimeout(() => {
+        if (!isCircleClicked) {
+            unmountCircleByTimeOut(listOfCircleIds, circle);
+            return;
+        }}, 1300);
 };
 
 const startGame = () => {
