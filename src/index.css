@@ -45,6 +45,14 @@ body {
     font-size: 22px;
     border: 1px solid #fff;
 }
+.test-border {
+    border: 1px solid green;
+    border-radius: 50%;
+    position: absolute;
+    top: -21px;
+    left: -21px;
+    right: 0;
+}
 .score-field {
     width: 140px;
     height: 50px;

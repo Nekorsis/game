@@ -83,10 +83,8 @@ const createRedCircle = (colour) => {
         const x = getRandomArbitrary(40, containerSize.w);
         const y = getRandomArbitrary(40, containerSize.h);
         const something = listOfCircleIds.every(circle => {
-            console.log(x - parseInt((circle.x.split('p')[0])));
             return  (x - parseInt((circle.x.split('p')[0]))) >= 150 
         });
-        console.log('something: ', something);
         return {
             x,
             y,
@@ -164,7 +162,7 @@ const createRedCircle = (colour) => {
         } else if (e.button === 0 && e.target.className.includes('blue')) {
             unmountCircleByTimeOut(listOfCircleIds, circle);
         }
-    }
+    };
 
     /* Mount circle in a random place */
     let coordinates = getRandomCoordinates();
@@ -177,12 +175,22 @@ const createRedCircle = (colour) => {
     });
     gameContainer.appendChild(circle);
 
+     /* Initialize border*/
+     
+    const border = document.createElement('div');
+    border.className = 'test-border';
+    border.style.width = `${circlesSize + 40}px`;
+    border.style.height = `${circlesSize + 40}px`;
+    circle.appendChild(border);
+
     /* Set self-destruct timer */
+    /*
     setTimeout(() => {
         if (!isCircleClicked) {
             unmountCircleByTimeOut(listOfCircleIds, circle);
             return;
         }}, 1300);
+        */
 };
 
 const startGame = () => {
@@ -191,7 +199,7 @@ const startGame = () => {
         timer = setInterval(() => {
             const color = Math.random() >= 0.4 ? 'red' : 'blue';
             createRedCircle(color);
-        }, 700);
+        }, 600);
         return;
     }
     return;
