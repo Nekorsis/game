@@ -20,32 +20,32 @@ let score = 0;
 let counter = 0;
 let isGameStarted = false;
 
-const updateDOM = () => {
+const updateScoreNodes = () => {
   scoreContainer.innerHTML = `Your score is: ${score}`;
   comboContainer.innerHTML = `Combo: ${combo}`;
 };
 
-updateDOM();
+updateScoreNodes();
 
 const updateScore = (action) => {
   if (action === 'add') {
     score += 100;
-    updateDOM();
+    updateScoreNodes();
   }
   if (action === 'remove') {
     score -= 100;
-    updateDOM();
+    updateScoreNodes();
   }
 };
 
 const updateCombo = (action) => {
   if (action === 'add') {
     combo += 1;
-    updateDOM();
+    updateScoreNodes();
   }
   if (action === 'break') {
     combo = 0;
-    updateDOM();
+    updateScoreNodes();
   }
 };
 
@@ -129,15 +129,15 @@ const createRedCircle = (colour) => {
     if (e.button === 0 && e.target.className.includes('red')) {
       isCircleClicked = true;
       redAudio.play();
-      unmountCircleByClick(listOfCircleIds, circle);
+      unmountCircleByClick(circle);
     } else if (e.button === 2 && e.target.className.includes('red')) {
-      unmountCircleByTimeOut(listOfCircleIds, circle);
+      unmountCircleByTimeOut(circle);
     } else if (e.button === 2 && e.target.className.includes('blue')) {
       isCircleClicked = true;
       blueAudio.play();
-      unmountCircleByClick(listOfCircleIds, circle);
+      unmountCircleByClick(circle);
     } else if (e.button === 0 && e.target.className.includes('blue')) {
-      unmountCircleByTimeOut(listOfCircleIds, circle);
+      unmountCircleByTimeOut(circle);
     }
   };
 
@@ -156,7 +156,7 @@ const createRedCircle = (colour) => {
 
   setTimeout(() => {
     if (!isCircleClicked) {
-      unmountCircleByTimeOut(listOfCircleIds, circle);
+      unmountCircleByTimeOut(circle);
     }
   }, 1300);
 };
@@ -167,7 +167,7 @@ const startGame = () => {
     timer = setInterval(() => {
       const color = Math.random() >= 0.4 ? 'red' : 'blue'; // randoming colors for circles, should do more red`s
       createRedCircle(color);
-    }, 600);
+    }, 400);
   }
 };
 
