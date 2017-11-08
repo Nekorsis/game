@@ -11,8 +11,6 @@ body {
 .game-field {
     background-color: #3e3b3b;
     position: relative;
-    width: 1025px;
-    height: 625px;
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;

@@ -1,12 +1,17 @@
 import './index.css';
 import './reset.css';
 
+const FIELD_WIDTH = 825;
+const FIELD_HEIGHT = 525;
+
 const gameContainer = document.getElementsByClassName('game-field')[0];
 const redAudio = document.getElementsByClassName('audio-red')[0];
 const blueAudio = document.getElementsByClassName('audio-blue')[0];
 const scoreContainer = document.getElementsByClassName('score-field')[0];
 const comboContainer = document.getElementsByClassName('combo-field')[0];
 
+gameContainer.style.width = `${FIELD_WIDTH}px`;
+gameContainer.style.height = `${FIELD_HEIGHT}px`;
 
 gameContainer.addEventListener('contextmenu', (e) => {
   e.preventDefault();
@@ -52,7 +57,7 @@ const updateCombo = (action) => {
 const createRedCircle = (colour) => {
   let isCircleClicked = false;
   const getRandomCoordinates = () => {
-    const containerSize = { w: 1025 - circlesSize, h: 625 - circlesSize };
+    const containerSize = { w: FIELD_WIDTH - circlesSize, h: FIELD_HEIGHT - circlesSize };
     const getRandomArbitrary = (min, max) => Math.round(Math.random() * (max - min) + min);
     const x = getRandomArbitrary(40, containerSize.w);
     const y = getRandomArbitrary(40, containerSize.h);
@@ -181,6 +186,7 @@ const stopGame = () => {
   };
   clearField(listOfCircleIds);
   clearInterval(timer);
+  isGameStarted = !isGameStarted;
 };
 
 const circleButton = document.getElementsByClassName('add-circle-btn')[0];
