@@ -1,5 +1,11 @@
 # Game
 Game
 to run:
-npm i
-npm start 
+``` bash
+# install dependencies
+npm install
+
+# serve with hot reload at localhost:8080
+npm start
+
+```
